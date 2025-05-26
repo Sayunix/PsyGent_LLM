@@ -8,6 +8,7 @@ junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 kotlinxSerializationJson = "1.6.0"
+ktor = "2.3.4"
 ktorClientCio = "2.3.4"
 ktorClientContentNegotiation = "2.3.4"
 ktorClientCore = "2.3.4"
@@ -15,8 +16,11 @@ ktorSerializationKotlinxJson = "2.3.4"
 lifecycleRuntimeKtx = "2.6.1"
 activityCompose = "1.8.0"
 composeBom = "2024.09.00"
+transportRuntime = "4.0.0"
 
 [libraries]
+ktor-client-logging-jvm = { group = "io.ktor", name = "ktor-client-logging-jvm", version.ref = "ktor" }
+ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 androidx-activity-compose-v1101 = { module = "androidx.activity:activity-compose", version.ref = "activityComposeVersion" }
 androidx-compose-bom-v20231001 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -43,9 +47,13 @@ ui = { module = "androidx.compose.ui:ui" }
 ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
-
+retrofit               = { group = "com.squareup.retrofit2", name = "retrofit",             version = "2.9.0" }
+converter-gson         = { group = "com.squareup.retrofit2", name = "converter-gson",      version = "2.9.0" }
+okhttp                 = { group = "com.squareup.okhttp3",   name = "okhttp",               version = "4.9.0" }
+logging-interceptor    = { group = "com.squareup.okhttp3",   name = "logging-interceptor",  version = "4.9.0" }
+transport-runtime = { group = "com.google.android.datatransport", name = "transport-runtime", version.ref = "transportRuntime" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

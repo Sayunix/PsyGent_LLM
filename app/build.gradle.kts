@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.0"
+    id("org.jetbrains.kotlin.plugin.serialization") version libs.versions.kotlin.get()
 
 }
 
@@ -42,6 +42,16 @@ android {
 }
 
 dependencies {
+
+
+    // Retrofit & Converter
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
+    // OkHttp Core + Logging
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+
     // Compose BOM
     implementation(platform(libs.androidx.compose.bom))
 
@@ -52,6 +62,7 @@ dependencies {
 
     // Tooling
     implementation(libs.ui.tooling.preview)
+    implementation(libs.transport.runtime)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
 
@@ -70,6 +81,9 @@ dependencies {
     implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.kotlinx.json)
+
+    // JVM-Logging-Plugin
+    implementation(libs.ktor.client.logging.jvm)
 
     implementation(libs.kotlinx.serialization.json)
 

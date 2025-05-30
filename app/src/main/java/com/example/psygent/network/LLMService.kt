@@ -1,9 +1,6 @@
 package com.example.psygent.network
 
 
-import com.example.psygent.network.GenerateRequest
-import com.example.psygent.network.GenerateResponse
-
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
@@ -47,8 +44,9 @@ object LLMService {
         install(HttpTimeout) {
             requestTimeoutMillis = 120_000   // 2 Minuten insgesamt
             connectTimeoutMillis = 10_000    // 10 Sekunden bis zur Verbindung
-            socketTimeoutMillis  = 120_000   // 2 Minuten für Socket-IO
+            socketTimeoutMillis = 120_000   // 2 Minuten für Socket-IO
         }
+
     }
 
     /**
@@ -56,34 +54,28 @@ object LLMService {
      * unter http://10.0.2.2:5000/generate
      * und gibt nur das Feld `response` zurück.
      */
-    suspend fun generate(prompt: String): String {
-        try {
-            // sende Request
-            val response: HttpResponse = client.post("http://10.0.2.2:5000/generate") {
-                contentType(ContentType.Application.Json)
-                setBody(GenerateRequest(prompt))
-                accept(ContentType.Application.Json)
-            }
+    suspend fun generate(
+        prompt: String,
+        history: List<Pair<String,String>>
+    ): String {
+        // wandelt Pair → ChatTurn
+        val turns = history.map { (u,a) -> ChatTurn(u, a) }
+        val req   = GenerateRequest(prompt, turns)
 
-            return if (response.status.isSuccess()) {
-                // 2xx → body in GenerateResponse parsen
-                response.body<GenerateResponse>().response
+        return try {
+            val res: HttpResponse = client.post("http://10.0.2.2:5000/generate") {
+                contentType(ContentType.Application.Json)
+                setBody(req)
+            }
+            if (res.status.isSuccess()) {
+                res.body<GenerateResponse>().response
             } else {
-                // 4xx/5xx → Fehlertext aus dem JSON lesen
-                val text = response.bodyAsText()
-                // versuch, das error-Feld zu parsen
-                runCatching {
-                    Json.decodeFromString<ErrorResponse>(text).error
-                }.getOrElse { fallback ->
-                    // falls selbst das scheitert, return rohen Body
-                    text
-                }.let { errMsg ->
-                    "Fehler: $errMsg"
-                }
+                val txt = res.bodyAsText()
+                runCatching { Json.decodeFromString<ErrorResponse>(txt).error }
+                    .getOrNull() ?: txt
             }
         } catch (e: Exception) {
-            // Netzwerk- oder Parser-Exception
-            return "Fehler: ${e.localizedMessage}"
+            "Fehler: ${e.localizedMessage}"
         }
     }
 }

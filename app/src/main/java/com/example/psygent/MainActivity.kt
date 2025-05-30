@@ -31,11 +31,11 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatScreen() {
-    var userInput     by remember { mutableStateOf("") }
-    var chatHistory   by remember { mutableStateOf(emptyList<Pair<String, String>>()) }
+    var userInput      by remember { mutableStateOf("") }
+    var chatHistory    by remember { mutableStateOf(emptyList<Pair<String, String>>()) }
     var showDisclaimer by remember { mutableStateOf(true) }
-    var isLoading     by remember { mutableStateOf(false) }
-    val scope         = rememberCoroutineScope()
+    var isLoading      by remember { mutableStateOf(false) }
+    val scope          = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         chatHistory = emptyList()
@@ -116,7 +116,7 @@ fun ChatScreen() {
                         isLoading = true
                         scope.launch {
                             val reply = runCatching {
-                                LLMService.generate(userInput)
+                                LLMService.generate(userInput, chatHistory)
                             }.getOrElse { ex ->
                                 "Fehler: ${ex.localizedMessage}"
                             }
